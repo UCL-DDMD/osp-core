@@ -1,0 +1,259 @@
+---
+version: "0.0.1"
+namespace: "LIB"
+author: "Mike Wang"
+
+ontology:
+
+   ######## Section 1. Relationship #########
+
+    HAS_PART:
+      description: "default relationship"
+      subclass_of:
+        - CUBA.activeRelationship
+      inverse: LIB.IS_PART_OF
+      default_rel: true
+
+    IS_PART_OF:
+      description: "inverse of the default relationship"
+      subclass_of:
+        - CUBA.passiveRelationship
+      inverse: LIB.HAS_PART
+
+    ######### Section 2. Framework #########
+    LIBWrapper:
+      description: "The lithium ion battery dataset wrapper"
+      subclass_of:
+        - CUBA.Wrapper
+        - LIB.HAS_PART:
+            cardinality: 1+
+            exclusive: false
+            range: LIB.ELECTRODE
+
+    Electrode:
+      description: "All components that made up a electrode in lithium-ion battery and its testing conditions"
+      subclass_of:
+        - CUBA.Entity
+        - LIB.HAS_PART:
+            cardinality: 1+
+            exclusive: false
+            range: LIB.Cell
+        - LIB.HAS_PART:
+            cardinality: 1+
+            exclusive: false
+            range: LIB.Composition
+        - LIB.HAS_PART:
+            cardinality: 1+
+            exclusive: false
+            range: LIB.TestConditions
+        - LIB.HAS_PART:
+            cardinality: 1+
+            exclusive: false
+            range: LIB.Capacities
+
+    ############# Section 3. Attributes ###############################
+
+    value:
+      subclass_of:
+        - CUBA.attribute
+      datatype: FLOAT
+
+    unit:
+      subclass_of:
+        - CUBA.attribute
+      datatype: STRING
+
+    name:
+      subclass_of:
+        - CUBA.attribute
+      datatype: STRING
+
+    number:
+      subclass_of:
+        - CUBA.attribute
+      datatype: INT
+    #
+    #numcycle:
+    #    subclass_of:
+    #        - CUBA.attribute
+    #    datatype: INT
+    ############# Section 4. Relationships #############################
+
+    Cell:
+      subclass_of:
+        - CUBA.Entity
+        - LIB.HAS_PART:
+            range: LIB.ELEMENT
+            cardinality: 1+
+        - LIB.HAS_PART:
+            range: LIB.LatticeConstant
+            cardinality: 1+
+        - LIB.HAS_PART:
+            range: LIB.CellVolume
+            cardinality: 1
+            exclusive: true
+
+    Element:
+        subclass_of:
+            - CUBA.Entity
+            - LIB.HAS_PART:
+                range: LIB.NumofElectrons
+                cardinality: 1
+            - LIB.HAS_PART:
+                range: LIB.NumofIso
+                cardinality: 1
+            - LIB.HAS_PART:
+                range: LIB.IonisationE
+                cardinality: 1+
+            - LIB.HAS_PART:
+                range: LIB.RADIUS
+                cardinality: 1+
+            - LIB.HAS_PART:
+                range: LIB.CHEMICALPROPERTY
+                cardinality: 1
+        attributes:
+            LIB.name:
+
+    PhysicalQuantity:
+        attributes:
+            LIB.value:
+            LIB.unit:
+        subclass_of:
+            - CUBA.Entity
+
+    NumericalValue:
+        attributes:
+            LIB.value:
+        subclass_of:
+            - CUBA.Entity
+
+    Composition:
+      subclass_of:
+        - CUBA.Entity
+        - LIB.HAS_PART:
+            range: LIB.Elements
+            cardinality: 1+
+      attributes:
+        LIB.name:
+        LIB.value:
+
+    Radius:
+      subclass_of:
+        - CUBA.Entity
+        - LIB.HAS_PART:
+            range: LIB.AtomicRadius
+            cardinality: 1
+        - LIB.HAS_PART:
+            range: LIB.IonicRadius
+            cardinality: 1
+      attributes:
+        LIB.value:
+        LIB.unit:
+
+    Chemicalproperty:
+      subclass_of:
+        - CUBA.Entity
+        - LIB.HAS_PART:
+            range: LIB.ElectronAffin
+            cardinality: 1
+        - LIB.HAS_PART:
+            range: LIB.Electronegativity
+            cardinality: 1
+      attributes:
+        LIB.number:
+
+    TestConditions:
+      subclass_of:
+        - LIB.PhysicalQuantity
+        - LIB.HAS_PART:
+            range: LIB.MinVoltage
+            cardinality: 1
+        - LIB.HAS_PART:
+            range: LIB.MaxVoltage
+            cardinality: 1
+        - LIB.HAS_PART:
+            range: LIB.CurrentDensity
+            cardinality: 1
+
+    Capacities:
+      subclass_of:
+        - LIB.PhysicalQuantity
+        - LIB.HAS_PART:
+            range: LIB.InitialCapacity
+            cardinality: 1
+        - LIB.HAS_PART:
+            range: LIB.EndCapacity
+            cardinality: 1
+
+    ElectronAffin:
+      description: "Electron Affinity"
+      subclass_of:
+        - LIB.NumericalValue
+
+    Electronegativity:
+      description: "Electronegativity values"
+      subclass_of:
+        - LIB.NumericalValue
+
+
+    NumofIso:
+      description: "Number of isotopes"
+      subclass_of:
+        - LIB.NumericalValue
+
+
+    LatticeConstant:
+      description: "The lattice constants of the crystal structure cell"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    CellVolume:
+      description: "The volume of the crystal structure cell"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    NumofElectrons:
+      description: "Number of electrons"
+      subclass_of:
+        - LIB.NumericalValue
+
+    IonisationE:
+      description: "Ionisation Energy"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+
+    AtomicRadius:
+      description: "The atomic radius"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    IonicRadius:
+      description: "The ionic radius"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    MinVoltage:
+      description: "The minimum testing voltage"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    MaxVoltage:
+      description: "The maximum testing voltage"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    CurrentDensity:
+      description: "The current density testing"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    InitialCapacity:
+      description: "The first cycle discharge capacities"
+      subclass_of:
+        - LIB.PhysicalQuantity
+
+    EndCapacity:
+      description: "The last cycle discharge capacities"
+      subclass_of:
+        - LIB.PhysicalQuantity

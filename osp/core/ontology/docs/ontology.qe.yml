@@ -1,0 +1,317 @@
+---
+version: "0.1"
+namespace: "QE"
+author: "Mathias Driesse"
+
+ontology:
+
+    ############################ Relationships
+    
+    HAS_PART:
+        description: "default relationship"
+        subclass_of:
+            - CUBA.activeRelationship
+        inverse: QE.IS_PART_OF
+        default_rel: true
+
+    IS_PART_OF:
+        description: "inverse of the default relationship"
+        subclass_of:
+            -  CUBA.passiveRelationship
+        inverse: QE.HAS_PART
+        
+    ############################ Framework
+    
+    QEWrapper:
+        description: "The quantum espresso wrapper"
+        subclass_of:
+            - CUBA.Wrapper
+            - QE.HAS_PART:
+                cardinality: 1
+                exclusive: true
+                range: QE.SIMULATION
+    
+    Simulation:
+        description: "All components of the simulation that are needed to run the model"
+        subclass_of:
+            - CUBA.Entity
+            - QE.HAS_PART:
+                cardinality: 1
+                exclusive: false
+                range: QE.Cell
+            - QE.HAS_PART:
+                cardinality: 1
+                exclusive: false
+                range: QE.TotalEnergy
+
+
+    ############################ Physical objects
+
+    Cell:
+        subclass_of:
+            - CUBA.Entity
+            - QE.HAS_PART:
+                range: QE.Atom
+                cardinality: 1+
+            - QE.HAS_PART:
+                range: QE.CellParams
+        
+    Atom:
+        subclass_of:
+            - CUBA.Entity
+            - QE.HAS_PART:
+                range: QE.Position
+                cardinality: 1
+
+    Element:
+        subclass_of:
+            - CUBA.Entity
+            - QE.HAS_PART:
+                range: QE.Mass
+                cardinality: 1
+            - QE.HAS_PART:
+                range: QE.Atom
+                cardinality: 1+
+            - QE.HAS_PART:
+                range: QE.PSEUDOPOTENTIAL
+                cardinality: 1
+        attributes:
+            QE.name:
+
+
+
+    ############################ Physical quantities
+
+    PhysicalQuantity:
+        attributes:
+            QE.value:
+            QE.unit:
+        subclass_of:
+            - CUBA.Entity
+
+    PhysicalQuantityVector:
+        attributes:
+            QE.vector:
+            QE.unit:
+        subclass_of:
+            - CUBA.Entity
+
+    PhysicalQuantityVector6:
+        attributes:
+            QE.vector6:
+            QE.unit:
+        subclass_of:
+            - CUBA.Entity
+
+    PhysicalQuantityTensor2:
+        attributes:
+            QE.tensor2:
+            QE.unit:
+        subclass_of:
+            - CUBA.Entity
+
+    Position:
+        description: "Position of an entity"
+        subclass_of: 
+            - QE.PhysicalQuantityVector
+
+    IfPos:
+        description: "Multiplier of a force in a particular direction. Each component can be 0 or 1, with 0 fixed and 1 variable"
+        subclass_of:
+            - QE.PhysicalQuantityVector
+
+    Mass:
+        description: "Mass of an entity"
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    CellParams:
+        subclass_of:
+            - QE.PhysicalQuantityTensor2
+
+    TotalEnergy:
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    StressTensor:
+        subclass_of:
+            - QE.PhysicalQuantityTensor2
+
+    Celldm1:
+        description: Placeholder
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    BulkModulus:
+        description: The bulk modulus of the cell
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    Force:
+        description: A force
+        subclass_of:
+            - QE.PhysicalQuantityVector
+
+    Pressure:
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    K_POINTS:
+        description: Placeholder
+        subclass_of:
+            - QE.PhysicalQuantityVector6
+
+    K_POINT:
+        description: Vector is the location in the Brillouin zone. Value is the weight of the K Point.
+        subclass_of:
+            - CUBA.Entity
+        attributes:
+            QE.vector:
+            QE.value:
+            QE.unit:
+
+    Volume:
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    EquilibriumVolume:
+        subclass_of:
+            - QE.PhysicalQuantity
+
+    Frequency:
+        subclass_of:
+            - QE.PhysicalQuantity
+    
+    QPoint:
+        subclass_of:
+            - QE.PhysicalQuantityVector
+        attributes:
+            QE.calculate:
+
+    Mode:
+        attributes:
+            QE.number:
+        subclass_of:
+            - CUBA.Entity
+
+    DielectricTensor:
+        subclass_of:
+            - QE.PhysicalQuantityTensor2
+
+    IfPos:
+        subclass_of:
+            - QE.PhysicalQuantityVector
+
+    # Constraint:
+    #     subclass_of:
+    #         - CUBA.Entity
+    #     attributes:
+    #         QE.name:
+    #         QE.vector4
+
+    ############################ Attributes
+
+    value:
+        subclass_of:
+            - CUBA.attribute
+        datatype: FLOAT
+
+    unit:
+        subclass_of:
+            - CUBA.attribute
+        datatype: STRING
+
+    vector:
+        subclass_of:
+            - CUBA.attribute
+        datatype: VECTOR:3
+
+    vector6:
+        subclass_of:
+            - CUBA.attribute
+        datatype: VECTOR:6
+
+    tensor2:
+        subclass_of:
+            - CUBA.attribute
+        datatype: VECTOR:3:3
+
+    name:
+        subclass_of:
+            - CUBA.attribute
+        datatype: STRING
+
+    number:
+        subclass_of:
+            - CUBA.attribute
+        datatype: INT
+
+    calculate:
+        subclass_of:
+            - CUBA.attribute
+        datatype: BOOL
+
+    ############################ Files
+
+    PSEUDOPOTENTIAL:
+        subclass_of:
+            - CUBA.File
+
+    Outfile:
+        subclass_of:
+            - CUBA.File
+    
+    BandsDat:
+        subclass_of:
+            - CUBA.File
+
+    PwOut:
+        subclass_of:
+            - CUBA.File
+
+    DosDat:
+        subclass_of:
+            - CUBA.File
+
+    XSF:
+        subclass_of:
+            - CUBA.File
+
+    PhOut:
+        subclass_of:
+            - CUBA.File
+    
+    EvOut:
+        subclass_of:
+            - CUBA.File
+
+    A2fDat:
+        subclass_of:
+            - CUBA.File
+
+    DynMat:
+        subclass_of:
+            - CUBA.File
+
+
+
+
+    
+
+    
+
+    
+
+
+
+    
+
+    
+        
+    
+    
+        
+       
+        
+
+    
