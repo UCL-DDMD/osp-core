@@ -50,6 +50,8 @@ ontology:
             cardinality: 1+
             exclusive: false
             range: LIB.Capacities
+      attributes:
+          LIB.name:
 
     ############# Section 3. Attributes ###############################
 
